@@ -37,9 +37,9 @@ jobs:
         with:
           name: ProtoBridge-Win64
           path: |
-            bin/Win64
-            lib/Win64
-            includes
+            Source/ProtoBridgeThirdParty/bin/Win64
+            Source/ProtoBridgeThirdParty/lib/Win64
+            Source/ProtoBridgeThirdParty/includes
           retention-days: 1
 
   build-linux:
@@ -69,9 +69,9 @@ jobs:
         with:
           name: ProtoBridge-Linux
           path: |
-            bin/Linux
-            lib/Linux
-            includes
+            Source/ProtoBridgeThirdParty/bin/Linux
+            Source/ProtoBridgeThirdParty/lib/Linux
+            Source/ProtoBridgeThirdParty/includes
           retention-days: 1
 
   build-android:
@@ -109,6 +109,6 @@ jobs:
         with:
           name: ProtoBridge-Android
           path: |
-            lib/Android
-            includes
+            Source/ProtoBridgeThirdParty/lib/Android
+            Source/ProtoBridgeThirdParty/includes
           retention-days: 1
