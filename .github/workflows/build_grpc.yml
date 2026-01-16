@@ -13,6 +13,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Install NASM
+        run: choco install nasm
+
       - name: Run Build Script
         shell: pwsh
         run: |
@@ -34,10 +42,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential cmake git
+          sudo apt-get install -y build-essential cmake git nasm
 
       - name: Run Build Script
         run: |
@@ -60,15 +73,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
       - name: Install Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential cmake git ninja-build
 
       - name: Setup Android NDK
-        uses: android-actions/setup-ndk@v3
+        uses: nttld/setup-ndk@v1
         with:
-          ndk-version: r25c
+          ndk-version: r26d
 
       - name: Run Build Script
         run: |
@@ -86,23 +104,28 @@ jobs:
             includes
           retention-days: 1
 
-  build-mac:
-    runs-on: macos-14
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Run Build Script
-        run: |
-          chmod +x ./Source/ProtoBridgeThirdParty/scripts/build_mac.sh
-          ./Source/ProtoBridgeThirdParty/scripts/build_mac.sh
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ProtoBridge-Mac
-          path: |
-            bin/Mac
-            lib/Mac
-            includes
-          retention-days: 1
+#  build-mac:
+#    runs-on: macos-14
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+#
+#      - name: Setup Go
+#        uses: actions/setup-go@v5
+#        with:
+#          go-version: '1.22'
+#
+#      - name: Run Build Script
+#        run: |
+#          chmod +x ./Source/ProtoBridgeThirdParty/scripts/build_mac.sh
+#          ./Source/ProtoBridgeThirdParty/scripts/build_mac.sh
+#
+#      - name: Upload Artifacts
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: ProtoBridge-Mac
+#          path: |
+#            bin/Mac
+#            lib/Mac
+#            includes
+#          retention-days: 1
