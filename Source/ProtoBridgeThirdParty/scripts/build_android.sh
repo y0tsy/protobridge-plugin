@@ -75,6 +75,7 @@ cmake ../grpc \
     -DgRPC_RE2_PROVIDER=module \
     -DgRPC_PROTOBUF_PROVIDER=module \
     -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+    -D_gRPC_PROTOBUF_PROTOC_EXECUTABLE="$HOST_PROTOC" \
     -D_gRPC_CPP_PLUGIN="$HOST_PLUGIN"
 
 cmake --build . --config Release --target install
