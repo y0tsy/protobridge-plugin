@@ -43,7 +43,7 @@ cmake ../grpc \
     -DgRPC_CARES_PROVIDER=module \
     -DgRPC_RE2_PROVIDER=module \
     -DgRPC_PROTOBUF_PROVIDER=module \
-    -DCMAKE_CXX_VISIBILITY_PRESET=hidden \
+    -DCMAKE_CXX_STANDARD=17 \
     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
 
 cmake --build . --config Release --target install
