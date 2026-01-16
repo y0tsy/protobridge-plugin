@@ -13,6 +13,7 @@ FINAL_INCLUDE_DIR="$ROOT_DIR/includes"
 mkdir -p "$BUILD_DIR"
 mkdir -p "$FINAL_BIN_DIR"
 mkdir -p "$FINAL_LIB_DIR"
+mkdir -p "$FINAL_INCLUDE_DIR"
 
 cd "$SCRIPT_DIR"
 
