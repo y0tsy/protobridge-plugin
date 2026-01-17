@@ -6,6 +6,10 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+if(MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
 find_package(absl CONFIG REQUIRED)
 find_package(Protobuf CONFIG REQUIRED)
 find_package(utf8_range CONFIG)
@@ -40,6 +44,9 @@ if(TARGET protobuf::libprotoc AND TARGET protobuf::libprotobuf)
     target_link_libraries(bridge_generator PRIVATE
         protobuf::libprotoc
         protobuf::libprotobuf
+        absl::base
+        absl::strings
+        absl::log_internal_check_op 
     )
 else()
     target_link_libraries(bridge_generator PRIVATE
