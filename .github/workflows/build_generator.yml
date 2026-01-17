@@ -30,12 +30,21 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y build-essential cmake git
 
-    - name: Clone Protobuf ${{ env.PROTOBUF_VERSION }}
+    - name: Cache Protobuf
+      id: cache-protobuf
+      uses: actions/cache@v4
+      with:
+        path: ${{ github.workspace }}/ProtoInstall
+        key: ${{ runner.os }}-protobuf-${{ env.PROTOBUF_VERSION }}
+
+    - name: Clone Protobuf
+      if: steps.cache-protobuf.outputs.cache-hit != 'true'
       working-directory: ${{ github.workspace }}
       run: |
-        git clone -b ${{ env.PROTOBUF_VERSION }} --depth 1 https://github.com/protocolbuffers/protobuf.git
+        git clone --recursive -b ${{ env.PROTOBUF_VERSION }} --depth 1 https://github.com/protocolbuffers/protobuf.git
 
-    - name: Build Protobuf (Release)
+    - name: Build Protobuf
+      if: steps.cache-protobuf.outputs.cache-hit != 'true'
       working-directory: ${{ github.workspace }}/protobuf
       run: |
         cmake -S . -B build \
@@ -77,12 +86,21 @@ jobs:
       run: |
         brew install cmake
 
-    - name: Clone Protobuf ${{ env.PROTOBUF_VERSION }}
+    - name: Cache Protobuf
+      id: cache-protobuf
+      uses: actions/cache@v4
+      with:
+        path: ${{ github.workspace }}/ProtoInstall
+        key: ${{ runner.os }}-protobuf-${{ env.PROTOBUF_VERSION }}
+
+    - name: Clone Protobuf
+      if: steps.cache-protobuf.outputs.cache-hit != 'true'
       working-directory: ${{ github.workspace }}
       run: |
-        git clone -b ${{ env.PROTOBUF_VERSION }} --depth 1 https://github.com/protocolbuffers/protobuf.git
+        git clone --recursive -b ${{ env.PROTOBUF_VERSION }} --depth 1 https://github.com/protocolbuffers/protobuf.git
 
-    - name: Build Protobuf (Release)
+    - name: Build Protobuf
+      if: steps.cache-protobuf.outputs.cache-hit != 'true'
       working-directory: ${{ github.workspace }}/protobuf
       run: |
         cmake -S . -B build \
@@ -120,12 +138,21 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Clone Protobuf ${{ env.PROTOBUF_VERSION }}
+    - name: Cache Protobuf
+      id: cache-protobuf
+      uses: actions/cache@v4
+      with:
+        path: ${{ github.workspace }}/ProtoInstall
+        key: ${{ runner.os }}-protobuf-${{ env.PROTOBUF_VERSION }}
+
+    - name: Clone Protobuf
+      if: steps.cache-protobuf.outputs.cache-hit != 'true'
       working-directory: ${{ github.workspace }}
       run: |
-        git clone -b ${{ env.PROTOBUF_VERSION }} --depth 1 https://github.com/protocolbuffers/protobuf.git
+        git clone --recursive -b ${{ env.PROTOBUF_VERSION }} --depth 1 https://github.com/protocolbuffers/protobuf.git
 
-    - name: Build Protobuf (Release)
+    - name: Build Protobuf
+      if: steps.cache-protobuf.outputs.cache-hit != 'true'
       working-directory: ${{ github.workspace }}/protobuf
       run: |
         cmake -S . -B build `
