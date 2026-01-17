@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.15)
+ ﻿cmake_minimum_required(VERSION 3.15)
 
 project(ProtoBridgeGenerator LANGUAGES CXX)
 
@@ -9,7 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(Protobuf REQUIRED)
 
 add_executable(bridge_generator
-    Private/ProtoBridgeGenerator.cpp
+    Private/ProtobufGenerator.cpp
     Private/CodeBuilder.h
     Private/DependencySorter.h
     Private/GeneratorContext.h
