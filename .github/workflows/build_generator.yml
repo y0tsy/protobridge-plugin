@@ -145,7 +145,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{ github.workspace }}/ProtoInstall
-        key: ${{ runner.os }}-protobuf-${{ env.PROTOBUF_VERSION }}-cxx17
+        key: ${{ runner.os }}-protobuf-${{ env.PROTOBUF_VERSION }}-cxx17-mt
 
     - name: Clone Protobuf
       if: steps.cache-protobuf.outputs.cache-hit != 'true'
@@ -163,6 +163,7 @@ jobs:
           -Dprotobuf_BUILD_TESTS=OFF `
           -Dprotobuf_BUILD_EXAMPLES=OFF `
           -Dprotobuf_ABSL_PROVIDER=module `
+          -Dprotobuf_MSVC_STATIC_RUNTIME=ON `
           -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/ProtoInstall"
         cmake --build build --config Release --target install --parallel
 
