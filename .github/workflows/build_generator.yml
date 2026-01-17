@@ -35,7 +35,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{ github.workspace }}/ProtoInstall
-        key: ${{ runner.os }}-protobuf-${{ env.PROTOBUF_VERSION }}-cxx17
+        key: ${{ runner.os }}-protobuf-${{ env.PROTOBUF_VERSION }}-cxx17-v2
 
     - name: Clone Protobuf
       if: steps.cache-protobuf.outputs.cache-hit != 'true'
@@ -92,7 +92,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{ github.workspace }}/ProtoInstall
-        key: ${{ runner.os }}-protobuf-${{ env.PROTOBUF_VERSION }}-cxx17
+        key: ${{ runner.os }}-protobuf-${{ env.PROTOBUF_VERSION }}-cxx17-v2
 
     - name: Clone Protobuf
       if: steps.cache-protobuf.outputs.cache-hit != 'true'
@@ -140,12 +140,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Set up MSVC Dev Cmd
+      uses: ilammy/msvc-dev-cmd@v1
+
     - name: Cache Protobuf
       id: cache-protobuf
       uses: actions/cache@v4
       with:
         path: ${{ github.workspace }}/ProtoInstall
-        key: ${{ runner.os }}-protobuf-${{ env.PROTOBUF_VERSION }}-cxx17-mt
+        key: ${{ runner.os }}-protobuf-${{ env.PROTOBUF_VERSION }}-cxx17-mt-v2
 
     - name: Clone Protobuf
       if: steps.cache-protobuf.outputs.cache-hit != 'true'
@@ -157,7 +160,7 @@ jobs:
       if: steps.cache-protobuf.outputs.cache-hit != 'true'
       working-directory: ${{ github.workspace }}/protobuf
       run: |
-        cmake -S . -B build `
+        cmake -S . -B build -G Ninja `
           -DCMAKE_CXX_STANDARD=17 `
           -DCMAKE_BUILD_TYPE=Release `
           -Dprotobuf_BUILD_TESTS=OFF `
@@ -170,7 +173,8 @@ jobs:
     - name: Configure Generator
       working-directory: Source/ProtoBridgeGenerator
       run: |
-        cmake -S . -B Build `
+        cmake -S . -B Build -G Ninja `
+          -DCMAKE_CXX_STANDARD=17 `
           -DCMAKE_BUILD_TYPE=Release `
           -DCMAKE_PREFIX_PATH="${{ github.workspace }}/ProtoInstall" `
           -Dprotobuf_MODULE_COMPATIBLE=ON
@@ -183,4 +187,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: bridge_generator-windows
-        path: Source/ProtoBridgeGenerator/Build/Release/bridge_generator.exe
+        path: Source/ProtoBridgeGenerator/Build/bridge_generator.exe
