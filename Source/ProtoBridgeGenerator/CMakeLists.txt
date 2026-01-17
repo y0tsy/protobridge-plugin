@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
+set(CMAKE_POLICY_DEFAULT_CMP0091 NEW)
+
 project(ProtoBridgeGenerator LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -44,9 +46,6 @@ if(TARGET protobuf::libprotoc AND TARGET protobuf::libprotobuf)
     target_link_libraries(bridge_generator PRIVATE
         protobuf::libprotoc
         protobuf::libprotobuf
-        absl::base
-        absl::strings
-        absl::log_internal_check_op 
     )
 else()
     target_link_libraries(bridge_generator PRIVATE
