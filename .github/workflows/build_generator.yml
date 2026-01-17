@@ -28,7 +28,7 @@ jobs:
     - name: Install System Tools
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential cmake git
+        sudo apt-get install -y build-essential cmake git ninja-build
 
     - name: Cache Protobuf
       id: cache-protobuf
@@ -43,20 +43,11 @@ jobs:
       run: |
         git clone --recursive -b ${{ env.PROTOBUF_VERSION }} --depth 1 https://github.com/protocolbuffers/protobuf.git
 
-    - name: Enable Swap Space
-      run: |
-        sudo fallocate -l 4G /swapfile
-        sudo chmod 600 /swapfile
-        sudo mkswap /swapfile
-        sudo swapon /swapfile
-        echo "Swap enabled. Memory stats:"
-        free -h    
-
     - name: Build Protobuf
       if: steps.cache-protobuf.outputs.cache-hit != 'true'
       working-directory: ${{ github.workspace }}/protobuf
       run: |
-        cmake -S . -B build \
+        cmake -S . -B build -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
           -Dprotobuf_BUILD_TESTS=OFF \
           -Dprotobuf_BUILD_EXAMPLES=OFF \
@@ -67,7 +58,7 @@ jobs:
 
     - name: Configure Generator
       run: |
-        cmake -S . -B Build \
+        cmake -S . -B Build -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
           -DCMAKE_PREFIX_PATH="${{ github.workspace }}/ProtoInstall" \
           -Dprotobuf_MODULE_COMPATIBLE=ON
@@ -93,7 +84,7 @@ jobs:
 
     - name: Install System Tools
       run: |
-        brew install cmake
+        brew install cmake ninja
 
     - name: Cache Protobuf
       id: cache-protobuf
@@ -112,7 +103,7 @@ jobs:
       if: steps.cache-protobuf.outputs.cache-hit != 'true'
       working-directory: ${{ github.workspace }}/protobuf
       run: |
-        cmake -S . -B build \
+        cmake -S . -B build -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
           -Dprotobuf_BUILD_TESTS=OFF \
           -Dprotobuf_BUILD_EXAMPLES=OFF \
@@ -123,7 +114,7 @@ jobs:
 
     - name: Configure Generator
       run: |
-        cmake -S . -B Build \
+        cmake -S . -B Build -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
           -DCMAKE_PREFIX_PATH="${{ github.workspace }}/ProtoInstall" \
           -Dprotobuf_MODULE_COMPATIBLE=ON
