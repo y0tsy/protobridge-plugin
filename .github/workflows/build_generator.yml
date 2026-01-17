@@ -43,6 +43,15 @@ jobs:
       run: |
         git clone --recursive -b ${{ env.PROTOBUF_VERSION }} --depth 1 https://github.com/protocolbuffers/protobuf.git
 
+    - name: Enable Swap Space
+      run: |
+        sudo fallocate -l 4G /swapfile
+        sudo chmod 600 /swapfile
+        sudo mkswap /swapfile
+        sudo swapon /swapfile
+        echo "Swap enabled. Memory stats:"
+        free -h    
+
     - name: Build Protobuf
       if: steps.cache-protobuf.outputs.cache-hit != 'true'
       working-directory: ${{ github.workspace }}/protobuf
