@@ -18,6 +18,13 @@ Set-Location $SCRIPT_DIR
 if (!(Test-Path "grpc")) {
     Write-Host "Cloning gRPC..."
     git clone --recurse-submodules -b $GRPC_VERSION --depth 1 --shallow-submodules https://github.com/grpc/grpc
+
+        Write-Host "Patching gRPC upb for DLL export..."
+    $ALLOC_H = Join-Path $SCRIPT_DIR "grpc\third_party\upb\upb\mem\alloc.h"
+    if (Test-Path $ALLOC_H) {
+        (Get-Content $ALLOC_H) -replace 'extern const upb_alloc upb_alloc_global;', '__declspec(dllexport) extern const upb_alloc upb_alloc_global;' | Set-Content $ALLOC_H
+        Write-Host "Successfully patched alloc.h"
+    }
 }
 else {
     Write-Host "Updating gRPC..."
