@@ -38,6 +38,8 @@ cmake ../grpc \
     -DBUILD_SHARED_LIBS=ON \
     -DgRPC_INSTALL=ON \
     -DgRPC_BUILD_TESTS=OFF \
+    -Dprotobuf_BUILD_PROTOC_BINARIES=ON \
+    -DgRPC_BUILD_CODEGEN=ON \
     -Dprotobuf_BUILD_TESTS=OFF \
     -DgRPC_SSL_PROVIDER=module \
     -DgRPC_ZLIB_PROVIDER=module \
