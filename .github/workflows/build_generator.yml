@@ -35,7 +35,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{ github.workspace }}/ProtoInstall
-        key: ${{ runner.os }}-protobuf-${{ env.PROTOBUF_VERSION }}
+        key: ${{ runner.os }}-protobuf-${{ env.PROTOBUF_VERSION }}-cxx17
 
     - name: Clone Protobuf
       if: steps.cache-protobuf.outputs.cache-hit != 'true'
@@ -48,6 +48,7 @@ jobs:
       working-directory: ${{ github.workspace }}/protobuf
       run: |
         cmake -S . -B build -G Ninja \
+          -DCMAKE_CXX_STANDARD=17 \
           -DCMAKE_BUILD_TYPE=Release \
           -Dprotobuf_BUILD_TESTS=OFF \
           -Dprotobuf_BUILD_EXAMPLES=OFF \
@@ -91,7 +92,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{ github.workspace }}/ProtoInstall
-        key: ${{ runner.os }}-protobuf-${{ env.PROTOBUF_VERSION }}
+        key: ${{ runner.os }}-protobuf-${{ env.PROTOBUF_VERSION }}-cxx17
 
     - name: Clone Protobuf
       if: steps.cache-protobuf.outputs.cache-hit != 'true'
@@ -104,6 +105,7 @@ jobs:
       working-directory: ${{ github.workspace }}/protobuf
       run: |
         cmake -S . -B build -G Ninja \
+          -DCMAKE_CXX_STANDARD=17 \
           -DCMAKE_BUILD_TYPE=Release \
           -Dprotobuf_BUILD_TESTS=OFF \
           -Dprotobuf_BUILD_EXAMPLES=OFF \
@@ -143,7 +145,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{ github.workspace }}/ProtoInstall
-        key: ${{ runner.os }}-protobuf-${{ env.PROTOBUF_VERSION }}
+        key: ${{ runner.os }}-protobuf-${{ env.PROTOBUF_VERSION }}-cxx17
 
     - name: Clone Protobuf
       if: steps.cache-protobuf.outputs.cache-hit != 'true'
@@ -156,6 +158,7 @@ jobs:
       working-directory: ${{ github.workspace }}/protobuf
       run: |
         cmake -S . -B build `
+          -DCMAKE_CXX_STANDARD=17 `
           -DCMAKE_BUILD_TYPE=Release `
           -Dprotobuf_BUILD_TESTS=OFF `
           -Dprotobuf_BUILD_EXAMPLES=OFF `
