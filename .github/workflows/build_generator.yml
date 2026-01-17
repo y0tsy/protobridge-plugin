@@ -1,7 +1,6 @@
 name: Build ProtoBridge Generator
 
 on:
-  workflow_dispatch:
   push:
     branches: [ "main", "master" ]
     paths:
@@ -12,58 +11,89 @@ on:
       - 'Source/ProtoBridgeGenerator/**'
 
 jobs:
-  build:
-    name: Build on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-
+  build-linux:
+    name: Build Linux (Ubuntu)
+    runs-on: ubuntu-latest
     defaults:
       run:
-        shell: bash
+        working-directory: Source/ProtoBridgeGenerator
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install Dependencies (Linux)
-      if: runner.os == 'Linux'
+    - name: Install Dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y protobuf-compiler libprotobuf-dev
 
-    - name: Install Dependencies (macOS)
-      if: runner.os == 'macOS'
-      run: |
-        brew install protobuf
-
-    - name: Install Dependencies (Windows)
-      if: runner.os == 'Windows'
-      shell: powershell
-      run: |
-        vcpkg install protobuf:x64-windows
-
-    - name: Configure CMake (Linux/macOS)
-      if: runner.os != 'Windows'
-      working-directory: Source/ProtoBridgeGenerator
+    - name: Configure CMake
       run: cmake -S . -B Build -DCMAKE_BUILD_TYPE=Release
 
-    - name: Configure CMake (Windows)
-      if: runner.os == 'Windows'
-      working-directory: Source/ProtoBridgeGenerator
-      shell: powershell
-      run: |
-        cmake -S . -B Build -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT\scripts\buildsystems\vcpkg.cmake"
-
     - name: Build
-      working-directory: Source/ProtoBridgeGenerator
       run: cmake --build Build --config Release
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: bridge_generator-${{ matrix.os }}
-        path: |
-          Source/ProtoBridgeGenerator/Build/bridge_generator
-          Source/ProtoBridgeGenerator/Build/Release/bridge_generator.exe
+        name: bridge_generator-linux
+        path: Source/ProtoBridgeGenerator/Build/bridge_generator
+
+  build-macos:
+    name: Build macOS
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: Source/ProtoBridgeGenerator
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Dependencies
+      run: brew install protobuf
+
+    - name: Configure CMake
+      run: cmake -S . -B Build -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build
+      run: cmake --build Build --config Release
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: bridge_generator-macos
+        path: Source/ProtoBridgeGenerator/Build/bridge_generator
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: Source/ProtoBridgeGenerator
+        shell: powershell
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download Latest Protobuf
+      working-directory: ${{ github.workspace }}
+      run: |
+        $Response = Invoke-RestMethod -Uri "https://api.github.com/repos/protocolbuffers/protobuf/releases/latest"
+        $Tag = $Response.tag_name
+        $Version = $Tag -replace "^v", ""
+        $Url = "https://github.com/protocolbuffers/protobuf/releases/download/$Tag/protobuf-$Version-win64.zip"
+        Write-Output "Downloading Protobuf $Version from $Url"
+        Invoke-WebRequest -Uri $Url -OutFile protobuf.zip
+        Expand-Archive -Path protobuf.zip -DestinationPath C:\Protobuf -Force
+
+    - name: Configure CMake
+      run: |
+        cmake -S . -B Build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="C:\Protobuf" -Dprotobuf_MODULE_COMPATIBLE=ON
+
+    - name: Build
+      run: cmake --build Build --config Release
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: bridge_generator-windows
+        path: Source/ProtoBridgeGenerator/Build/Release/bridge_generator.exe
