@@ -12,19 +12,12 @@ $FINAL_INCLUDE_DIR = Join-Path $ROOT_DIR "includes"
 if (!(Test-Path $BUILD_DIR)) { New-Item -ItemType Directory -Path $BUILD_DIR | Out-Null }
 if (!(Test-Path $FINAL_BIN_DIR)) { New-Item -ItemType Directory -Path $FINAL_BIN_DIR -Force | Out-Null }
 if (!(Test-Path $FINAL_LIB_DIR)) { New-Item -ItemType Directory -Path $FINAL_LIB_DIR -Force | Out-Null }
-
+if (!(Test-Path $FINAL_INCLUDE_DIR)) { New-Item -ItemType Directory -Path $FINAL_INCLUDE_DIR -Force | Out-Null }
 Set-Location $SCRIPT_DIR
 
 if (!(Test-Path "grpc")) {
     Write-Host "Cloning gRPC..."
     git clone --recurse-submodules -b $GRPC_VERSION --depth 1 --shallow-submodules https://github.com/grpc/grpc
-
-        Write-Host "Patching gRPC upb for DLL export..."
-    $ALLOC_H = Join-Path $SCRIPT_DIR "grpc\third_party\upb\upb\mem\alloc.h"
-    if (Test-Path $ALLOC_H) {
-        (Get-Content $ALLOC_H) -replace 'extern const upb_alloc upb_alloc_global;', '__declspec(dllexport) extern const upb_alloc upb_alloc_global;' | Set-Content $ALLOC_H
-        Write-Host "Successfully patched alloc.h"
-    }
 }
 else {
     Write-Host "Updating gRPC..."
@@ -43,7 +36,7 @@ cmake ../grpc `
     -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR `
     -DCMAKE_VERBOSE_MAKEFILE=ON `
     -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE `
-    -DBUILD_SHARED_LIBS=ON `
+    -DBUILD_SHARED_LIBS=OFF `
     -DgRPC_INSTALL=ON `
     -DgRPC_BUILD_TESTS=OFF `
     -Dprotobuf_BUILD_TESTS=OFF `
@@ -57,7 +50,7 @@ cmake ../grpc `
 
 cmake --build . --config Release --target install
 
-Copy-Item -Path "$INSTALL_DIR\bin\*.dll" -Destination $FINAL_BIN_DIR -Force
+Copy-Item -Path "$INSTALL_DIR\bin\*.exe" -Destination $FINAL_BIN_DIR -Force
 Copy-Item -Path "$INSTALL_DIR\lib\*.lib" -Destination $FINAL_LIB_DIR -Force
 Copy-Item -Path "$INSTALL_DIR\include\*" -Destination $FINAL_INCLUDE_DIR -Recurse -Force
 
