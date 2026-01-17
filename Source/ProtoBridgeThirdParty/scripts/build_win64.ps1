@@ -34,6 +34,8 @@ cmake ../grpc `
     -GNinja `
     -DCMAKE_BUILD_TYPE=Release `
     "-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR" `
+    -DCMAKE_CXX_FLAGS="/w" `
+    -DCMAKE_C_FLAGS="/w" `
     -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE `
     -DBUILD_SHARED_LIBS=OFF `
     -DgRPC_INSTALL=ON `
