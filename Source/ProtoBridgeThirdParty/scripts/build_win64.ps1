@@ -34,12 +34,14 @@ cmake ../grpc `
     -GNinja `
     -DCMAKE_BUILD_TYPE=Release `
     -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR `
-    -DCMAKE_VERBOSE_MAKEFILE=ON `
     -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE `
     -DBUILD_SHARED_LIBS=OFF `
     -DgRPC_INSTALL=ON `
     -DgRPC_BUILD_TESTS=OFF `
     -Dprotobuf_BUILD_TESTS=OFF `
+    -Dprotobuf_BUILD_PROTOC_BINARIES=ON `
+    -DgRPC_BUILD_CODEGEN=ON `
+    -DgRPC_BUILD_TESTS=OFF `
     -DgRPC_MSVC_STATIC_RUNTIME=OFF `
     -Dprotobuf_MSVC_STATIC_RUNTIME=OFF `
     -DgRPC_SSL_PROVIDER=module `
@@ -50,7 +52,12 @@ cmake ../grpc `
 
 cmake --build . --config Release --target install
 
-Copy-Item -Path "$INSTALL_DIR\bin\*.exe" -Destination $FINAL_BIN_DIR -Force
+if (Test-Path "$INSTALL_DIR\bin") {
+    Copy-Item -Path "$INSTALL_DIR\bin\*.exe" -Destination $FINAL_BIN_DIR -Force
+} else {
+    Write-Warning "Bin folder not found"
+}
+
 Copy-Item -Path "$INSTALL_DIR\lib\*.lib" -Destination $FINAL_LIB_DIR -Force
 Copy-Item -Path "$INSTALL_DIR\include\*" -Destination $FINAL_INCLUDE_DIR -Recurse -Force
 
