@@ -37,7 +37,6 @@ jobs:
         with:
           name: ProtoBridge-Win64
           path: |
-            Source/ProtoBridgeThirdParty/bin/Win64
             Source/ProtoBridgeThirdParty/lib/Win64
             Source/ProtoBridgeThirdParty/includes
           retention-days: 1
