@@ -1,0 +1,68 @@
+name: Build ProtoBridge Generator
+
+on:
+  push:
+    branches: [ "main", "master" ]
+    paths:
+      - 'Source/ProtoBridgeGenerator/**'
+  pull_request:
+    branches: [ "main", "master" ]
+    paths:
+      - 'Source/ProtoBridgeGenerator/**'
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Dependencies (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y protobuf-compiler libprotobuf-dev
+
+    - name: Install Dependencies (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        brew install protobuf
+
+    - name: Install Dependencies (Windows)
+      if: runner.os == 'Windows'
+      shell: powershell
+      run: |
+        vcpkg install protobuf:x64-windows
+
+    - name: Configure CMake (Linux/macOS)
+      if: runner.os != 'Windows'
+      working-directory: Source/ProtoBridgeGenerator
+      run: cmake -S . -B Build -DCMAKE_BUILD_TYPE=Release
+
+    - name: Configure CMake (Windows)
+      if: runner.os == 'Windows'
+      working-directory: Source/ProtoBridgeGenerator
+      shell: powershell
+      run: |
+        cmake -S . -B Build -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT\scripts\buildsystems\vcpkg.cmake"
+
+    - name: Build
+      working-directory: Source/ProtoBridgeGenerator
+      run: cmake --build Build --config Release
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: bridge_generator-${{ matrix.os }}
+        path: |
+          Source/ProtoBridgeGenerator/Build/bridge_generator
+          Source/ProtoBridgeGenerator/Build/Release/bridge_generator.exe
